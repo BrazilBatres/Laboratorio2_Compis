@@ -1,0 +1,191 @@
+Gramática
+
+    0 $accept: bexpr $end
+
+    1 bexpr: bexpr OR bterm
+    2      | bterm
+
+    3 bterm: bterm AND bfactor
+    4      | bfactor
+
+    5 bfactor: NOT bfactor
+    6        | '(' bexpr ')'
+    7        | TRUE
+    8        | FALSE
+
+
+Terminales con las reglas donde aparecen
+
+$end (0) 0
+'(' (40) 6
+')' (41) 6
+error (256)
+OR (258) 1
+AND (259) 3
+NOT (260) 5
+TRUE (261) 7
+FALSE (262) 8
+
+
+No terminales con las reglas donde aparecen
+
+$accept (10)
+    en la izquierda: 0
+bexpr (11)
+    en la izquierda: 1 2, en la derecha: 0 1 6
+bterm (12)
+    en la izquierda: 3 4, en la derecha: 1 2 3
+bfactor (13)
+    en la izquierda: 5 6 7 8, en la derecha: 3 4 5
+
+
+estado 0
+
+    0 $accept: . bexpr $end
+
+    NOT    desplazar e ir al estado 1
+    TRUE   desplazar e ir al estado 2
+    FALSE  desplazar e ir al estado 3
+    '('    desplazar e ir al estado 4
+
+    bexpr    ir al estado 5
+    bterm    ir al estado 6
+    bfactor  ir al estado 7
+
+
+estado 1
+
+    5 bfactor: NOT . bfactor
+
+    NOT    desplazar e ir al estado 1
+    TRUE   desplazar e ir al estado 2
+    FALSE  desplazar e ir al estado 3
+    '('    desplazar e ir al estado 4
+
+    bfactor  ir al estado 8
+
+
+estado 2
+
+    7 bfactor: TRUE .
+
+    $default  reduce usando la regla 7 (bfactor)
+
+
+estado 3
+
+    8 bfactor: FALSE .
+
+    $default  reduce usando la regla 8 (bfactor)
+
+
+estado 4
+
+    6 bfactor: '(' . bexpr ')'
+
+    NOT    desplazar e ir al estado 1
+    TRUE   desplazar e ir al estado 2
+    FALSE  desplazar e ir al estado 3
+    '('    desplazar e ir al estado 4
+
+    bexpr    ir al estado 9
+    bterm    ir al estado 6
+    bfactor  ir al estado 7
+
+
+estado 5
+
+    0 $accept: bexpr . $end
+    1 bexpr: bexpr . OR bterm
+
+    $end  desplazar e ir al estado 10
+    OR    desplazar e ir al estado 11
+
+
+estado 6
+
+    2 bexpr: bterm .
+    3 bterm: bterm . AND bfactor
+
+    AND  desplazar e ir al estado 12
+
+    $default  reduce usando la regla 2 (bexpr)
+
+
+estado 7
+
+    4 bterm: bfactor .
+
+    $default  reduce usando la regla 4 (bterm)
+
+
+estado 8
+
+    5 bfactor: NOT bfactor .
+
+    $default  reduce usando la regla 5 (bfactor)
+
+
+estado 9
+
+    1 bexpr: bexpr . OR bterm
+    6 bfactor: '(' bexpr . ')'
+
+    OR   desplazar e ir al estado 11
+    ')'  desplazar e ir al estado 13
+
+
+estado 10
+
+    0 $accept: bexpr $end .
+
+    $default  aceptar
+
+
+estado 11
+
+    1 bexpr: bexpr OR . bterm
+
+    NOT    desplazar e ir al estado 1
+    TRUE   desplazar e ir al estado 2
+    FALSE  desplazar e ir al estado 3
+    '('    desplazar e ir al estado 4
+
+    bterm    ir al estado 14
+    bfactor  ir al estado 7
+
+
+estado 12
+
+    3 bterm: bterm AND . bfactor
+
+    NOT    desplazar e ir al estado 1
+    TRUE   desplazar e ir al estado 2
+    FALSE  desplazar e ir al estado 3
+    '('    desplazar e ir al estado 4
+
+    bfactor  ir al estado 15
+
+
+estado 13
+
+    6 bfactor: '(' bexpr ')' .
+
+    $default  reduce usando la regla 6 (bfactor)
+
+
+estado 14
+
+    1 bexpr: bexpr OR bterm .
+    3 bterm: bterm . AND bfactor
+
+    AND  desplazar e ir al estado 12
+
+    $default  reduce usando la regla 1 (bexpr)
+
+
+estado 15
+
+    3 bterm: bterm AND bfactor .
+
+    $default  reduce usando la regla 3 (bterm)
